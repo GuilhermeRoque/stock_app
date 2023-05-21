@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 
@@ -5,14 +6,58 @@ def calc_average_price_batch(
         price: pd.Series,
         amount: pd.Series,
         brokerage_fee: pd.Series,
-):
-    pass
+) -> float:
+    x = price * amount + brokerage_fee
+    average_amount = amount.cumsum()
+    previous_average_amount = average_amount.shift(1).fillna(0)
+    y = x / average_amount
+    z = previous_average_amount / average_amount
+
+    average_price = np.zeros(len(y))
+    average_price[0] = y.iloc[0]
+
+    y = np.array(y)
+    z = np.array(z)
+    z = z[1:]
+    z = np.flip(z)
+    z = np.cumprod(z)
+    z = np.flip(z)
+    z = np.append(z, 1)
+    result = z * y
+    result = result.sum()
+
+    return result
+
+
+def calc_average_price_batch_loop(
+    price: pd.Series,
+    amount: pd.Series,
+    brokerage_fee: pd.Series,
+) -> float:
+    average_price = 0
+    average_amount = 0
+    for i in range(0, len(price)):
+        average_price = calc_average_price(
+            price=price[i],
+            amount=amount[i],
+            brokerage_fee=brokerage_fee[i],
+            average_price=average_price,
+            average_amount=average_amount
+        )
+        average_amount = calc_average_purchase_amount(
+            amount=amount[i],
+            average_amount=average_amount
+        )
+    return average_price
+
+def calc_average_purchase_amount_batch(amount: pd.Series):
+    return amount.sum()
 
 
 def calc_average_price(
-        price: float | pd.Series,
-        amount: int | pd.Series,
-        brokerage_fee: float | pd.Series,
+        price: float,
+        amount: int,
+        brokerage_fee: float,
         average_price: float = 0,
         average_amount: int = 0
 ) -> float:
@@ -24,11 +69,13 @@ def calc_average_price(
     :param average_amount: Stock average amount, initially zero (QM)
     :return: New calculated average price (PM)
     """
-    new_average_amount = calc_average_purchase_amount(
+    previous_average_amount = average_amount
+    average_amount = calc_average_purchase_amount(
         amount=amount,
         average_amount=average_amount
     )
-    average_price = (average_price * average_amount + price * amount + brokerage_fee) / new_average_amount
+    x = price * amount + brokerage_fee
+    average_price = (average_price * previous_average_amount + x) / average_amount
     return average_price
 
 

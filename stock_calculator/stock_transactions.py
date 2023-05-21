@@ -38,6 +38,6 @@ class StockTransactionsDataFrame(pd.DataFrame):
 
 class StockTransactionsFactory:
     @staticmethod
-    def read_from_csv(filepath_or_buffer: str):
+    def read_from_csv(filepath_or_buffer: str) -> StockTransactionsDataFrame:
         df = pd.read_csv(filepath_or_buffer=filepath_or_buffer)
         return StockTransactionsDataFrame(df)
