@@ -1,10 +1,17 @@
+from __future__ import annotations
 from enum import StrEnum
 import pandas as pd
 
 
 class StockTransactionsOperationsEnum(StrEnum):
-    purchase = "Compra"
-    sale = "Venda"
+    purchase = "purchase"
+    sale = "sale"
+
+
+OperationsEnumMapper = {
+    "Compra": StockTransactionsOperationsEnum.purchase,
+    "Venda": StockTransactionsOperationsEnum.sale
+}
 
 
 class StockTransactionsColumnsEnum(StrEnum):
@@ -14,30 +21,42 @@ class StockTransactionsColumnsEnum(StrEnum):
     fee = "fee"
 
 
-class StockTransactionsDataFrame(pd.DataFrame):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.columns = list(StockTransactionsColumnsEnum)
+class StockTransactionsDataFrame:
+    def __init__(self, df: pd.DataFrame):
+        self._df = df
 
-    @property
-    def operation(self):
-        return self[StockTransactionsColumnsEnum.operation]
+    def filter_sales_operations(self) -> StockTransactionsDataFrame:
+        df = self._df[self.is_sales_operations()].reset_index()
+        return StockTransactionsDataFrame(df)
 
-    @property
-    def price(self):
-        return self[StockTransactionsColumnsEnum.price]
+    def is_sales_operations(self):
+        return self._df[StockTransactionsColumnsEnum.operation] == StockTransactionsOperationsEnum.sale
 
-    @property
-    def amount(self):
-        return self[StockTransactionsColumnsEnum.amount]
+    def filter_purchase_operations(self) -> StockTransactionsDataFrame:
+        df = self._df[self.is_purchase_operations()].reset_index()
+        return StockTransactionsDataFrame(df)
 
-    @property
-    def fee(self):
-        return self[StockTransactionsColumnsEnum.fee]
+    def is_purchase_operations(self) -> pd.Series:
+        return self._df[StockTransactionsColumnsEnum.operation] == StockTransactionsOperationsEnum.purchase
+
+    def get_price(self) -> pd.Series:
+        return self._df[StockTransactionsColumnsEnum.price].copy()
+
+    def get_amount(self) -> pd.Series:
+        return self._df[StockTransactionsColumnsEnum.amount].copy()
+
+    def get_fee(self) -> pd.Series:
+        return self._df[StockTransactionsColumnsEnum.fee].copy()
+
+    def copy(self):
+        return self.__class__(self._df.copy())
 
 
-class StockTransactionsFactory:
+class StockTransactionsDataFrameFactory:
     @staticmethod
-    def read_from_csv(filepath_or_buffer: str) -> StockTransactionsDataFrame:
-        df = pd.read_csv(filepath_or_buffer=filepath_or_buffer)
+    def read_from_csv(filepath: str):
+        df = pd.read_csv(filepath_or_buffer=filepath)
+        df.columns = list(StockTransactionsColumnsEnum)
+        df[StockTransactionsColumnsEnum.operation] = df[StockTransactionsColumnsEnum.operation].map(
+            OperationsEnumMapper)
         return StockTransactionsDataFrame(df)
