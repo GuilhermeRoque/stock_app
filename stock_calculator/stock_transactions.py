@@ -67,6 +67,18 @@ class StockTransactionsDataFrame:
         ] += pd.offsets.MonthEnd(0)
         return StockTransactionsDataFrame(df)
 
+    def get_total_values_by_date(self):
+        df = self._df.groupby([
+            StockTransactionsColumnsEnum.date,
+            StockTransactionsColumnsEnum.operation
+        ])[StockTransactionsColumnsEnum.price].sum().reset_index()
+        df = df.pivot(
+            columns=StockTransactionsColumnsEnum.operation,
+            values=StockTransactionsColumnsEnum.price,
+            index=StockTransactionsColumnsEnum.date
+        ).reset_index()
+        return df
+
     def copy(self):
         return StockTransactionsDataFrame(self._df.copy())
 

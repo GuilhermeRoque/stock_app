@@ -1,16 +1,13 @@
 import numpy as np
 import pandas as pd
-
 from stock_calculator.calculator_base import CalculatorBase
-from stock_calculator.stock_transactions import StockTransactionsDataFrame
 
 
 class StockCalculatorBatch(CalculatorBase):
 
     def get_average_price(self, previous_average_price=0, previous_average_amount=0):
 
-        amount_complete = self._get_amount_and_update_with_operation()
-        average_amount = amount_complete.cumsum() + previous_average_amount
+        average_amount = self.get_average_amount_each_entry() + previous_average_amount
         df_stock = self.df_stock.filter_purchase_operations()
         if df_stock.is_empty():
             return previous_average_price

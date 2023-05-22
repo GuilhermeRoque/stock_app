@@ -15,7 +15,7 @@ class TestBaseMonthly(unittest.TestCase, abc.ABC):
         self.calculator = CalculatorMonthly(df_stock=self.df, calculator_type=self.calculator_type)
 
     def test_average_price_monthly(self):
-        average_price_calc = self.calculator.parse_monthly()
+        average_price_calc = self.calculator.parse_monthly().to_dict(orient='list')
         self.assertEqual(definitions.EXPECTED_MONTHLY_PARSE, average_price_calc)
 
     # def test_average_amount_monthly(self):
