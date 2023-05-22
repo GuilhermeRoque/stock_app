@@ -1,5 +1,5 @@
 from stock_calculator.calculator_batch import StockCalculatorBatch
-from tests.unit.test_base import TestBase
+from tests.unit.single_month.test_base import TestBase
 
 
 class TestCalcBatch(TestBase):

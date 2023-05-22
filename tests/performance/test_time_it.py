@@ -5,7 +5,7 @@ from stock_calculator.calculator_simple import StockCalculatorSimple
 from stock_calculator.calculator_batch import StockCalculatorBatch
 from stock_calculator.stock_transactions import StockTransactionsDataFrameFactory, \
     StockTransactionsDataFrame
-from tests import definitions
+from tests.mocks.single_month import definitions
 
 
 class TestTimeIt(unittest.TestCase):

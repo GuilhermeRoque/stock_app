@@ -1,13 +1,18 @@
 import abc
 
+from stock_calculator.stock_transactions import StockTransactionsDataFrame
 
-class CalculatorInterface(abc.ABC):
+
+class CalculatorBase(abc.ABC):
+    def __init__(self, df_stock: StockTransactionsDataFrame):
+        self.df_stock = df_stock
+
     @abc.abstractmethod
-    def get_average_price(self):
+    def get_average_price(self, previous_average_price=0, previous_average_amount=0):
         pass
 
     @abc.abstractmethod
-    def get_average_purchase_amount(self) -> int:
+    def get_average_amount(self) -> int:
         pass
 
     @abc.abstractmethod
@@ -19,5 +24,5 @@ class CalculatorInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_taxes(self):
+    def get_taxes(self, measured_result: float = None):
         pass

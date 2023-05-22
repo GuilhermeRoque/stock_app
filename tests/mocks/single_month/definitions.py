@@ -1,7 +1,7 @@
 import os
 
-TEST_DIR = os.path.dirname(os.path.abspath(__file__))
-FILE_DIR = os.path.join(TEST_DIR, 'mocks/sample.csv')
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+FILE_DIR = os.path.join(CURRENT_DIR, 'sample.csv')
 EXPECTED_AVERAGE_PRICE = 26.70625
 EXPECTED_AVERAGE_PURCHASE_AMOUNT = 400
 EXPECTED_AVERAGE_AMOUNT = 200
