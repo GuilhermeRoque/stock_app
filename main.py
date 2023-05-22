@@ -1,18 +1,17 @@
 from presentation.csv_view import CsvView
 from presentation.plot_view import PlotView
-from stock_calculator.calculator_batch import StockCalculatorBatch
 from stock_calculator.calculator_monthly import CalculatorMonthly
 from stock_calculator.stock_transactions import StockTransactionsDataFrameFactory
-from tests.mocks.multiple_months import definitions
+import definitions as main_definitions
 
 if __name__ == '__main__':
-    df = StockTransactionsDataFrameFactory.read_from_csv(filepath=definitions.FILE_DIR)
-    calculator_type = StockCalculatorBatch
+    df = StockTransactionsDataFrameFactory.read_from_csv(filepath=main_definitions.MOCK_MULTIPLE_MONTHS_PATH)
+    calculator_type = main_definitions.CALCULATOR_TYPE
     calculator = CalculatorMonthly(df_stock=df, calculator_type=calculator_type)
     df_result = calculator.parse_monthly()
 
-    # plot_view = PlotView(df=df_result)
-    # plot_view.show()
+    plot_view = PlotView(df=df_result, base_path=main_definitions.DESTINATION_FOLDER_PATH)
+    plot_view.export()
 
-    csv_view = CsvView(df=df_result)
+    csv_view = CsvView(df=df_result, base_path=main_definitions.DESTINATION_FOLDER_PATH)
     csv_view.export()

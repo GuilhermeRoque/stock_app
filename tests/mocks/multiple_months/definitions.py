@@ -3,6 +3,7 @@ from pandas import Timestamp
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FILE_DIR = os.path.join(CURRENT_DIR, 'sample.csv')
+
 EXPECTED_MONTHLY_PARSE = {
     'date': [
         Timestamp('2020-01-31 00:00:00'),
